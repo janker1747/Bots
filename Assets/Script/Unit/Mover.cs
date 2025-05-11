@@ -8,6 +8,8 @@ public class Mover : MonoBehaviour
     private float _stoppingDistanceSqr;
     private Vector3? _currentTarget;
 
+    public bool IsMoving => _currentTarget.HasValue;
+
     private void Awake()
     {
         _stoppingDistanceSqr = _stoppingDistance * _stoppingDistance;
@@ -44,5 +46,4 @@ public class Mover : MonoBehaviour
         return distanceSqr <= _stoppingDistanceSqr;
     }
 
-    public bool IsMoving => _currentTarget.HasValue;
 }

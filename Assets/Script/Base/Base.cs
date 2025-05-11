@@ -37,7 +37,7 @@ public class Base : MonoBehaviour
             {
                 if (unit == null || unit.IsBusy) continue;
 
-                Transform nearestResource = _resourceManager.GetNearestAvailableResource(unit.transform.position, unit);
+                Resource nearestResource = _resourceManager.GetNearestAvailableResource(unit.transform.position, unit);
 
                 if (nearestResource != null)
                 {

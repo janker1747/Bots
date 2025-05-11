@@ -14,10 +14,14 @@ public class ScanAbility : MonoBehaviour
     [Header("Outline Settings")]
     [SerializeField] private Material outlineMaterial;
 
-    public event Action<List<Transform>> ResourcesScanned;
+    public event Action<List<Resource>> ResourcesScanned;
+
+    private int _bufferSize = 20;
+    private Collider[] _colliderBuffer;
 
     private void Awake()
     {
+        _colliderBuffer = new Collider[_bufferSize];
         StartCoroutine(ScanLoop());
     }
 
@@ -36,19 +40,29 @@ public class ScanAbility : MonoBehaviour
     {
         WaitForSeconds scanDuration = new WaitForSeconds(_scanDuration);
 
-        Collider[] targets = Physics.OverlapSphere(transform.position, _scanRadius, _scanLayer);
+        int numColliders = Physics.OverlapSphereNonAlloc(
+            transform.position,
+            _scanRadius,
+            _colliderBuffer,
+            _scanLayer
+        );
 
-        List<Transform> scanned = new();
+        List<Resource> scanned = new();
         List<IScannable> scannedScannables = new();
 
-        foreach (Collider collision in targets)
+        for (int i = 0; i < numColliders; i++)
         {
+            Collider collision = _colliderBuffer[i];
             IScannable scannable = collision.GetComponent<IScannable>();
+            Resource resource = collision.GetComponent<Resource>();
 
             if (scannable != null)
             {
                 scannable.OnScanned();
-                scanned.Add(collision.transform);
+                if (resource != null)
+                {
+                    scanned.Add(resource);
+                }
                 scannedScannables.Add(scannable);
             }
         }

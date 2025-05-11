@@ -7,15 +7,12 @@ public class Unit : MonoBehaviour
     private Mover _mover;
     private ResourceHandler _resourceHandler;
 
-    private Transform _resourceTarget;
+    private Resource _resourceTarget;
     private Transform _dropOffPoint;
     private bool _isBusy = false;
     private bool _hasResource = false;
 
-    public Transform ResourceTarget => _resourceTarget;
-    public Transform DropOffPoint => _dropOffPoint;
-    public bool IsBusy => _isBusy;
-    public bool HasResource => _hasResource;
+    public bool IsBusy { get; private set; }
 
     private void Awake()
     {
@@ -25,7 +22,7 @@ public class Unit : MonoBehaviour
 
     private void Update()
     {
-        if (!_isBusy) return;
+        if (_isBusy == false) return;
 
         if (_hasResource)
         {
@@ -37,7 +34,7 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void AssignTask(Transform resource, Transform dropOff)
+    public void AssignTask(Resource resource, Transform dropOff)
     {
         if (_isBusy || resource == null || dropOff == null)
             return;
@@ -47,15 +44,15 @@ public class Unit : MonoBehaviour
         _isBusy = true;
         _hasResource = false;
 
-        _mover.MoveTo(resource.position);
+        _mover.MoveTo(resource.transform.position);
     }
 
     private void MoveToResource()
     {
         if (!_mover.IsMoving)
-            _mover.MoveTo(_resourceTarget.position);
+            _mover.MoveTo(_resourceTarget.transform.position);
 
-        if (_mover.HasReachedDestination(_resourceTarget.position))
+        if (_mover.HasReachedDestination(_resourceTarget.transform.position))
         {
             StartCoroutine(CollectResource());
         }

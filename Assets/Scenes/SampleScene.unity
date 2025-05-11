@@ -577,6 +577,7 @@ MonoBehaviour:
   _delay: 6
   _minDistanceFromBase: 3
   _minDistanceBetweenResources: 2
+  _baseTriggerZone: {fileID: 1601790494}
 --- !u!4 &1001306549 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8344318317793715659, guid: ed2935a010a617148aa9caa5f464a2af, type: 3}

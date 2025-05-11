@@ -50,5 +50,5 @@ public class Resource : MonoBehaviour, IScannable
         }
     }
 
-   
+
 }
