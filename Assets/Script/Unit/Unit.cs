@@ -92,7 +92,7 @@ public class Unit : MonoBehaviour
 
         if (_resourceTarget != null)
         {
-            var resourceManager = FindObjectOfType<ResourceManager>();
+            ResourceManager resourceManager = FindObjectOfType<ResourceManager>();
             resourceManager.ReleaseResource(_resourceTarget);
         }
     }

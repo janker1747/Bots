@@ -22,8 +22,6 @@ public class ResourceHandler : MonoBehaviour
         {
             mesh.enabled = true;
         }
-
-        Debug.Log($"{name} подобрал ресурс {resource.name}");
     }
 
     public void DropOffResource()

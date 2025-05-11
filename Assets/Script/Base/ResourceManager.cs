@@ -5,10 +5,10 @@ public class ResourceManager : MonoBehaviour
 {
     [SerializeField] private ScanAbility _scanAbility;
 
-    private List<Transform> _resources = new List<Transform>();
-    private Dictionary<Transform, Unit> _claimedResources = new Dictionary<Transform, Unit>();
+    private readonly List<Transform> _discoveredResources = new();
+    private readonly Dictionary<Transform, Unit> _claimedResources = new();
 
-    public int AvailableResourcesCount => _resources.Count;
+    public int AvailableResourcesCount => _discoveredResources.Count;
 
     private void OnEnable()
     {
@@ -22,32 +22,33 @@ public class ResourceManager : MonoBehaviour
 
     private void HandleScannedResources(List<Transform> scanned)
     {
-        foreach (Transform position in scanned)
+        foreach (Transform resource in scanned)
         {
-            _resources.Add(position);
+            if (_claimedResources.ContainsKey(resource)) continue;
+            if (_discoveredResources.Contains(resource)) continue;
+
+            _discoveredResources.Add(resource);
         }
     }
 
     public Transform GetNearestAvailableResource(Vector3 position, Unit requestingUnit)
     {
-        if (_resources.Count == 0)
+        if (_discoveredResources.Count == 0)
             return null;
 
         Transform nearestResource = null;
-        float closestDistance = Mathf.Infinity;
+        float closestSqrDistance = float.MaxValue;
 
-        foreach (Transform resource in _resources)
+        foreach (Transform resource in _discoveredResources)
         {
             if (_claimedResources.ContainsKey(resource) && _claimedResources[resource] != requestingUnit)
-            {
-                continue; 
-            }
+                continue;
 
-            float distance = Vector3.Distance(position, resource.position);
+            float sqrDistance = (position - resource.position).sqrMagnitude;
 
-            if (distance < closestDistance)
+            if (sqrDistance < closestSqrDistance)
             {
-                closestDistance = distance;
+                closestSqrDistance = sqrDistance;
                 nearestResource = resource;
             }
         }
@@ -55,8 +56,7 @@ public class ResourceManager : MonoBehaviour
         if (nearestResource != null)
         {
             _claimedResources[nearestResource] = requestingUnit;
-            _resources.Remove(nearestResource); 
-            Debug.Log($"ResourceManager: Ресурс {nearestResource.name} зарезервирован для {requestingUnit.name}");
+            _discoveredResources.Remove(nearestResource);
         }
 
         return nearestResource;
@@ -66,19 +66,12 @@ public class ResourceManager : MonoBehaviour
     {
         if (resource == null)
         {
-            Debug.LogWarning("ResourceManager: Попытка освободить null ресурс.");
             return;
         }
 
         if (_claimedResources.ContainsKey(resource))
         {
             _claimedResources.Remove(resource);
-            _resources.Add(resource);
-            Debug.Log($"ResourceManager: Ресурс {resource.name} освобожден.");
-        }
-        else
-        {
-            Debug.Log($"ResourceManager: Ресурс {resource.name} не был забран.");
         }
     }
 }

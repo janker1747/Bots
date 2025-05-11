@@ -31,7 +31,7 @@ public class Base : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(scanDelay);
 
-        while (true)
+        while (enabled)
         {
             foreach (Unit unit in _units)
             {

@@ -5,17 +5,10 @@ using UnityEngine.UI;
 public class SkillMenu : MonoBehaviour
 {
     [SerializeField] private CanvasGroup _canvasGroup;
-    [SerializeField] private Button _scan;
-    [SerializeField] private ScanAbility _scanAbility;
-
-    public ScanAbility ScanAbility => _scanAbility;
-
-    public event Action ScanButtonClicked;
 
     private void Awake()
     {
         HideMenu();
-        _scan.onClick.AddListener(() => ScanButtonClicked?.Invoke());
     }
 
     public void ToggleMenu()

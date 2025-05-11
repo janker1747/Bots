@@ -6,12 +6,10 @@ public class ResourcePool : MonoBehaviour
     [SerializeField] private Resource _prefab;
     [SerializeField] private int _maxSize = 10;
 
-    private Queue<Resource> _pool;
+    private readonly Queue<Resource> _pool = new();
 
     private void Awake()
     {
-        _pool = new Queue<Resource>();
-
         for (int i = 0; i < _maxSize; i++)
         {
             Resource resource = CreateResource();
@@ -24,13 +22,13 @@ public class ResourcePool : MonoBehaviour
     {
         Resource resource;
 
-        if (_pool.Count == 0)
+        if (_pool.Count > 0)
         {
-            resource = CreateResource();
+            resource = _pool.Dequeue();
         }
         else
         {
-            resource = _pool.Dequeue();
+            resource = CreateResource();
         }
 
         resource.gameObject.SetActive(true);
@@ -45,8 +43,6 @@ public class ResourcePool : MonoBehaviour
 
     private Resource CreateResource()
     {
-        Resource resource = Instantiate(_prefab);
-        resource.Initialize(this);
-        return resource;
+        return Instantiate(_prefab, transform);
     }
 }

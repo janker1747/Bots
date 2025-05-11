@@ -1,12 +1,13 @@
+using System;
 using UnityEngine;
 
 public class Resource : MonoBehaviour, IScannable
 {
     [SerializeField] private Color highlightColor = Color.cyan;
+
     private Renderer _renderer;
     private Color[] _originalColors;
 
-    private ResourcePool _pool;
 
     private void Awake()
     {
@@ -35,7 +36,7 @@ public class Resource : MonoBehaviour, IScannable
 
     private void HighlightMaterials()
     {
-        foreach (Material mat in _renderer.materials)
+        foreach (var mat in _renderer.materials)
         {
             mat.color = highlightColor;
         }
@@ -49,13 +50,5 @@ public class Resource : MonoBehaviour, IScannable
         }
     }
 
-    public void Initialize(ResourcePool pool)
-    {
-        _pool = pool;
-    }
-
-    public void ReturnToPool()
-    {
-        _pool?.ReturnObject(this);
-    }
+   
 }

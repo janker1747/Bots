@@ -5,42 +5,38 @@ using System;
 
 public class ScanAbility : MonoBehaviour
 {
-    [SerializeField] private SkillMenu _skillMenu;
-    [SerializeField] private ResourceManager _resourceManager;
-
     [Header("Scan Settings")]
-    [SerializeField] private float scanRadius = 10f;
-    [SerializeField] private LayerMask scanLayer;
-    [SerializeField] private float scanDuration = 3f;
+    [SerializeField] private float _scanRadius = 10f;
+    [SerializeField] private LayerMask _scanLayer;
+    [SerializeField] private float _scanDuration = 3f;
+    [SerializeField] private float _delay = 5f;
 
     [Header("Outline Settings")]
     [SerializeField] private Material outlineMaterial;
 
     public event Action<List<Transform>> ResourcesScanned;
 
-    private readonly List<Transform> scannedTargets = new();
-
-    private void OnEnable()
+    private void Awake()
     {
-        _skillMenu.ScanButtonClicked += TriggerScan;
+        StartCoroutine(ScanLoop());
     }
 
-    private void OnDisable()
+    private IEnumerator ScanLoop()
     {
-        _skillMenu.ScanButtonClicked -= TriggerScan;
-    }
+        WaitForSeconds scanDelay = new WaitForSeconds(_delay);
 
-    private void TriggerScan()
-    {
-        Debug.Log("Сканирование началось");
-        StartCoroutine(ScanRoutine());
+        while (enabled)
+        {
+            yield return scanDelay;
+            yield return StartCoroutine(ScanRoutine());
+        }
     }
 
     private IEnumerator ScanRoutine()
     {
-        WaitForSeconds waitForSeconds = new WaitForSeconds(scanDuration);
+        WaitForSeconds scanDuration = new WaitForSeconds(_scanDuration);
 
-        Collider[] targets = Physics.OverlapSphere(transform.position, scanRadius, scanLayer);
+        Collider[] targets = Physics.OverlapSphere(transform.position, _scanRadius, _scanLayer);
 
         List<Transform> scanned = new();
         List<IScannable> scannedScannables = new();
@@ -57,7 +53,7 @@ public class ScanAbility : MonoBehaviour
             }
         }
 
-        yield return waitForSeconds;
+        yield return scanDuration;
 
         ResourcesScanned?.Invoke(scanned);
 
@@ -67,14 +63,9 @@ public class ScanAbility : MonoBehaviour
         }
     }
 
-    public List<Transform> GetScannedTargets()
-    {
-        return new List<Transform>(scannedTargets);
-    }
-
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, scanRadius);
+        Gizmos.DrawWireSphere(transform.position, _scanRadius);
     }
 }

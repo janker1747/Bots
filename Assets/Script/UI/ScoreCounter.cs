@@ -13,10 +13,4 @@ public class ScoreCounter : MonoBehaviour
         _count++;
         OnScoreChanged?.Invoke(_count);
     }
-
-    public void ResetScore()
-    {
-        _count = 0;
-        OnScoreChanged?.Invoke(_count);
-    }
 }
