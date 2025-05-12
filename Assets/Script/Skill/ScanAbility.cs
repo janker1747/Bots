@@ -8,11 +8,14 @@ public class ScanAbility : MonoBehaviour
     [Header("Scan Settings")]
     [SerializeField] private float _scanRadius = 10f;
     [SerializeField] private LayerMask _scanLayer;
-    [SerializeField] private float _scanDuration = 3f;
+    [SerializeField] private float _duration = 3f;
     [SerializeField] private float _delay = 5f;
 
     [Header("Outline Settings")]
     [SerializeField] private Material outlineMaterial;
+
+    private WaitForSeconds _scanDelay;
+    private WaitForSeconds _scanDuration;
 
     public event Action<List<Resource>> ResourcesScanned;
 
@@ -22,24 +25,22 @@ public class ScanAbility : MonoBehaviour
     private void Awake()
     {
         _colliderBuffer = new Collider[_bufferSize];
+        _scanDelay = new WaitForSeconds(_delay);
+        _scanDuration = new WaitForSeconds(_duration);
         StartCoroutine(ScanLoop());
     }
 
     private IEnumerator ScanLoop()
     {
-        WaitForSeconds scanDelay = new WaitForSeconds(_delay);
-
         while (enabled)
         {
-            yield return scanDelay;
+            yield return _scanDelay;
             yield return StartCoroutine(ScanRoutine());
         }
     }
 
     private IEnumerator ScanRoutine()
     {
-        WaitForSeconds scanDuration = new WaitForSeconds(_scanDuration);
-
         int numColliders = Physics.OverlapSphereNonAlloc(
             transform.position,
             _scanRadius,
@@ -58,22 +59,24 @@ public class ScanAbility : MonoBehaviour
 
             if (scannable != null)
             {
-                scannable.Scanned();
+                scannable.HighlightScan();
+
                 if (resource != null)
                 {
                     scanned.Add(resource);
                 }
+
                 scannedScannables.Add(scannable);
             }
         }
 
-        yield return scanDuration;
+        yield return _scanDuration;
 
         ResourcesScanned?.Invoke(scanned);
 
         foreach (IScannable target in scannedScannables)
         {
-            target.ScanEnded();
+            target.RemoveScanHighlight();
         }
     }
 

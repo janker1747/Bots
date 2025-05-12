@@ -8,8 +8,6 @@ public class ResourceManager : MonoBehaviour
     private readonly List<Resource> _discoveredResources = new();
     private readonly Dictionary<Resource, Unit> _claimedResources = new();
 
-    public int AvailableResourcesCount => _discoveredResources.Count;
-
     private void OnEnable()
     {
         _scanAbility.ResourcesScanned += HandleScannedResources;
@@ -69,18 +67,5 @@ public class ResourceManager : MonoBehaviour
         }
 
         return nearestResource;
-    }
-
-    public void ReleaseResource(Resource resource)
-    {
-        if (resource == null)
-        {
-            return;
-        }
-
-        if (_claimedResources.ContainsKey(resource))
-        {
-            _claimedResources.Remove(resource);
-        }
     }
 }

@@ -1,5 +1,5 @@
 public interface IScannable
 {
-    void Scanned();
-    void ScanEnded();
+    void HighlightScan();
+    void RemoveScanHighlight();
 }

@@ -53,7 +53,6 @@ public class ResourceSpawner : MonoBehaviour
         Resource resource = _pool.GetObject();
         Vector3 spawnPoint = GetRandomPointOnPlane();
         resource.transform.position = spawnPoint;
-
     }
 
     private void OnResourceDelivered(Resource resource)
@@ -79,7 +78,7 @@ public class ResourceSpawner : MonoBehaviour
             bool tooCloseToBase = (candidate - _baseTransform.position).sqrMagnitude < _minDistanceFromBase * _minDistanceFromBase;
             bool tooCloseToOthers = _usedPositions.Exists(pos => (candidate - pos).sqrMagnitude < _minDistanceBetweenResources * _minDistanceBetweenResources);
 
-            if (!tooCloseToBase && !tooCloseToOthers)
+            if (tooCloseToBase == false && tooCloseToOthers == false)
             {
                 _usedPositions.Add(candidate);
                 return candidate;

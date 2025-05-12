@@ -696,7 +696,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _scanDuration: 3
-  _delay: 1
+  _delay: 4
   outlineMaterial: {fileID: 2100000, guid: 2f4ad81c2cfe18c448229df1b4beeab8, type: 2}
 --- !u!114 &2093389490
 MonoBehaviour:

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 public class Resource : MonoBehaviour, IScannable
@@ -7,7 +6,6 @@ public class Resource : MonoBehaviour, IScannable
 
     private Renderer _renderer;
     private Color[] _originalColors;
-
 
     private void Awake()
     {
@@ -25,17 +23,7 @@ public class Resource : MonoBehaviour, IScannable
         }
     }
 
-    public void Scanned()
-    {
-        HighlightMaterials();
-    }
-
-    public void ScanEnded()
-    {
-        RestoreOriginalColors();
-    }
-
-    private void HighlightMaterials()
+    public void HighlightScan()
     {
         foreach (var mat in _renderer.materials)
         {
@@ -43,13 +31,11 @@ public class Resource : MonoBehaviour, IScannable
         }
     }
 
-    private void RestoreOriginalColors()
+    public void RemoveScanHighlight()
     {
         for (int i = 0; i < _renderer.materials.Length; i++)
         {
             _renderer.materials[i].color = _originalColors[i];
         }
     }
-
-
 }

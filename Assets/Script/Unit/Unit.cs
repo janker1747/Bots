@@ -11,15 +11,18 @@ public class Unit : MonoBehaviour
     private Resource _resourceTarget;
     private Transform _dropOffPoint;
     private bool _hasResource = false;
+    private float _time = 1f;
+    private WaitForSeconds _collectedTime;
 
     public bool IsBusy { get; private set; }
 
-    private const float _reachedThresholdSqr = 0.01f; // 0.1^2
+    private const float _reachedThresholdSqr = 0.01f;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
         _resourceHandler = GetComponent<ResourceHandler>();
+        _collectedTime = new WaitForSeconds(_time);
     }
 
     private void OnEnable()
@@ -61,7 +64,7 @@ public class Unit : MonoBehaviour
 
     private IEnumerator CollectResource()
     {
-        yield return new WaitForSeconds(1f);
+        yield return _collectedTime;
 
         if (_resourceTarget != null)
         {

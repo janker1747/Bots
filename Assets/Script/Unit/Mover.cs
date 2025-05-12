@@ -9,7 +9,6 @@ public class Mover : MonoBehaviour
     private float _stoppingDistanceSqr;
     private Vector3? _currentTarget;
 
-    public bool IsMoving => _currentTarget.HasValue;
     public event Action<Vector3> DestinationReached;
 
     private void Awake()
@@ -19,7 +18,7 @@ public class Mover : MonoBehaviour
 
     private void Update()
     {
-        if (!_currentTarget.HasValue)
+        if (_currentTarget.HasValue == false)
             return;
 
         Vector3 target = _currentTarget.Value;
@@ -40,11 +39,5 @@ public class Mover : MonoBehaviour
     public void MoveTo(Vector3 targetPosition)
     {
         _currentTarget = targetPosition;
-    }
-
-    public bool HasReachedDestination(Vector3 targetPosition)
-    {
-        float distanceSqr = (transform.position - targetPosition).sqrMagnitude;
-        return distanceSqr <= _stoppingDistanceSqr;
     }
 }
