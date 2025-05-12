@@ -1,7 +1,8 @@
 using System.Collections;
-using System.Xml.Linq;
 using UnityEngine;
 
+[RequireComponent(typeof(Mover))]
+[RequireComponent(typeof(ResourceHandler))]
 public class Unit : MonoBehaviour
 {
     private Mover _mover;
@@ -9,10 +10,11 @@ public class Unit : MonoBehaviour
 
     private Resource _resourceTarget;
     private Transform _dropOffPoint;
-    private bool _isBusy = false;
     private bool _hasResource = false;
 
     public bool IsBusy { get; private set; }
+
+    private const float _reachedThresholdSqr = 0.01f; // 0.1^2
 
     private void Awake()
     {
@@ -20,41 +22,40 @@ public class Unit : MonoBehaviour
         _resourceHandler = GetComponent<ResourceHandler>();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        if (_isBusy == false) return;
+        _mover.DestinationReached += OnDestinationReached;
+    }
 
-        if (_hasResource)
-        {
-            MoveToDropOff();
-        }
-        else if (_resourceTarget != null)
-        {
-            MoveToResource();
-        }
+    private void OnDisable()
+    {
+        _mover.DestinationReached -= OnDestinationReached;
     }
 
     public void AssignTask(Resource resource, Transform dropOff)
     {
-        if (_isBusy || resource == null || dropOff == null)
+        if (IsBusy || resource == null || dropOff == null)
             return;
 
         _resourceTarget = resource;
         _dropOffPoint = dropOff;
-        _isBusy = true;
+        IsBusy = true;
         _hasResource = false;
 
         _mover.MoveTo(resource.transform.position);
     }
 
-    private void MoveToResource()
+    private void OnDestinationReached(Vector3 reachedPosition)
     {
-        if (!_mover.IsMoving)
-            _mover.MoveTo(_resourceTarget.transform.position);
-
-        if (_mover.HasReachedDestination(_resourceTarget.transform.position))
+        if (_resourceTarget != null && !_hasResource &&
+            (reachedPosition - _resourceTarget.transform.position).sqrMagnitude < _reachedThresholdSqr)
         {
             StartCoroutine(CollectResource());
+        }
+        else if (_hasResource &&
+            (_dropOffPoint.position - reachedPosition).sqrMagnitude < _reachedThresholdSqr)
+        {
+            DropOffResource();
         }
     }
 
@@ -66,18 +67,8 @@ public class Unit : MonoBehaviour
         {
             _resourceHandler.PickUpResource(_resourceTarget);
             _hasResource = true;
-            _resourceTarget = null;
-        }
-    }
-
-    private void MoveToDropOff()
-    {
-        if (!_mover.IsMoving)
             _mover.MoveTo(_dropOffPoint.position);
-
-        if (_mover.HasReachedDestination(_dropOffPoint.position))
-        {
-            DropOffResource();
+            _resourceTarget = null;
         }
     }
 
@@ -85,12 +76,6 @@ public class Unit : MonoBehaviour
     {
         _resourceHandler.DropOffResource();
         _hasResource = false;
-        _isBusy = false;
-
-        if (_resourceTarget != null)
-        {
-            ResourceManager resourceManager = FindObjectOfType<ResourceManager>();
-            resourceManager.ReleaseResource(_resourceTarget);
-        }
+        IsBusy = false;
     }
 }

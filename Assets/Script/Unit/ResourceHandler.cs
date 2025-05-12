@@ -9,7 +9,8 @@ public class ResourceHandler : MonoBehaviour
 
     public void PickUpResource(Resource resource)
     {
-        if (resource == null || _currentResource != null) return;
+        if (resource == null || _currentResource != null)
+            return;
 
         _currentResource = resource.transform;
         resource.transform.SetParent(_resourceHolder != null ? _resourceHolder : transform);
@@ -19,7 +20,8 @@ public class ResourceHandler : MonoBehaviour
 
     public void DropOffResource()
     {
-        if (_currentResource == null) return;
+        if (_currentResource == null)
+            return;
 
         _currentResource.position = _resourceHolder.position;
 

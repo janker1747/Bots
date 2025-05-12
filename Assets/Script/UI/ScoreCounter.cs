@@ -5,12 +5,12 @@ public class ScoreCounter : MonoBehaviour
 {
     private int _count;
 
-    public event Action<int> OnScoreChanged;
+    public event Action<int> ScoreChanged;
     public int CurrentScore => _count;
 
     public void AddPoint()
     {
         _count++;
-        OnScoreChanged?.Invoke(_count);
+        ScoreChanged?.Invoke(_count);
     }
 }

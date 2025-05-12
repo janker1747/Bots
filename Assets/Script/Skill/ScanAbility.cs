@@ -58,7 +58,7 @@ public class ScanAbility : MonoBehaviour
 
             if (scannable != null)
             {
-                scannable.OnScanned();
+                scannable.Scanned();
                 if (resource != null)
                 {
                     scanned.Add(resource);
@@ -73,7 +73,7 @@ public class ScanAbility : MonoBehaviour
 
         foreach (IScannable target in scannedScannables)
         {
-            target.OnScanEnded();
+            target.ScanEnded();
         }
     }
 

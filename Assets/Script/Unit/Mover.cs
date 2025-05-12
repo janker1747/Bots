@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Mover : MonoBehaviour
@@ -9,6 +10,7 @@ public class Mover : MonoBehaviour
     private Vector3? _currentTarget;
 
     public bool IsMoving => _currentTarget.HasValue;
+    public event Action<Vector3> DestinationReached;
 
     private void Awake()
     {
@@ -27,13 +29,13 @@ public class Mover : MonoBehaviour
         if (distanceSqr <= _stoppingDistanceSqr)
         {
             _currentTarget = null;
+            DestinationReached?.Invoke(target);
             return;
         }
 
         direction.Normalize();
         transform.position += direction * _moveSpeed * Time.deltaTime;
     }
-
 
     public void MoveTo(Vector3 targetPosition)
     {
@@ -45,5 +47,4 @@ public class Mover : MonoBehaviour
         float distanceSqr = (transform.position - targetPosition).sqrMagnitude;
         return distanceSqr <= _stoppingDistanceSqr;
     }
-
 }

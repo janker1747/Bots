@@ -32,6 +32,7 @@ public class UnitPool : MonoBehaviour
         }
 
         unit.gameObject.SetActive(true);
+
         return unit;
     }
 

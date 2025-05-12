@@ -18,18 +18,19 @@ public class Resource : MonoBehaviour, IScannable
     private void CacheOriginalColors()
     {
         _originalColors = new Color[_renderer.materials.Length];
+
         for (int i = 0; i < _renderer.materials.Length; i++)
         {
             _originalColors[i] = _renderer.materials[i].color;
         }
     }
 
-    public void OnScanned()
+    public void Scanned()
     {
         HighlightMaterials();
     }
 
-    public void OnScanEnded()
+    public void ScanEnded()
     {
         RestoreOriginalColors();
     }
