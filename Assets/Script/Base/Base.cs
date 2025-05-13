@@ -1,6 +1,6 @@
-﻿using System.Collections;
+﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Base : MonoBehaviour
 {
@@ -13,20 +13,20 @@ public class Base : MonoBehaviour
     [SerializeField] private ResourceManager _resourceManager;
     [SerializeField] private Transform _dropOffPoint;
 
-    private List<Unit> _units = new List<Unit>();
+    private List<Unit> _units = new();
 
     private void Awake()
     {
-        SpawnInitialUnits();
-        StartCoroutine(ResourceAssignmentLoop());
+        SpawnUnits();
+        StartCoroutine(AssignResourcesLoop());
     }
 
-    private void SpawnInitialUnits()
+    private void SpawnUnits()
     {
         _units = _unitSpawner.SpawnUnits(_initialUnitCount);
     }
 
-    private IEnumerator ResourceAssignmentLoop()
+    private IEnumerator AssignResourcesLoop()
     {
         WaitForSeconds wait = new WaitForSeconds(_scanDelay);
 
@@ -37,16 +37,13 @@ public class Base : MonoBehaviour
                 if (unit == null || unit.IsBusy)
                     continue;
 
-                Resource nearestResource = _resourceManager.GetNearestAvailableResource(unit.transform.position, unit);
+                Resource resource = _resourceManager.GetNearestAvailableResource(unit.transform.position);
 
-                if (nearestResource != null)
-                {
-                    unit.AssignTask(nearestResource, _dropOffPoint);
-                }
+                if (resource != null)
+                    unit.AssignTask(resource, _dropOffPoint);
             }
 
             yield return wait;
         }
     }
-
 }

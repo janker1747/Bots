@@ -6,66 +6,50 @@ public class ResourceManager : MonoBehaviour
     [SerializeField] private ScanAbility _scanAbility;
 
     private readonly List<Resource> _discoveredResources = new();
-    private readonly Dictionary<Resource, Unit> _claimedResources = new();
 
-    private void OnEnable()
-    {
-        _scanAbility.ResourcesScanned += HandleScannedResources;
-    }
-
-    private void OnDisable()
-    {
-        _scanAbility.ResourcesScanned -= HandleScannedResources;
-    }
-
-    private void HandleScannedResources(List<Resource> scanned)
-    {
-        foreach (Resource resource in scanned)
-        {
-            if (_claimedResources.ContainsKey(resource))
-            {
-                continue;
-            }
-
-            if (_discoveredResources.Contains(resource))
-            {
-                continue;
-            }
-
-            _discoveredResources.Add(resource);
-        }
-    }
-
-    public Resource GetNearestAvailableResource(Vector3 position, Unit requestingUnit)
+    public Resource GetNearestAvailableResource(Vector3 position)
     {
         if (_discoveredResources.Count == 0)
             return null;
 
-        Resource nearestResource = null;
-        float closestSqrDistance = float.MaxValue;
+        Resource nearest = null;
+        float shortestSqrDistance = float.MaxValue;
 
         foreach (Resource resource in _discoveredResources)
         {
-            if (_claimedResources.ContainsKey(resource) && _claimedResources[resource] != requestingUnit)
-            {
-                continue;
-            }
-
             float sqrDistance = (position - resource.transform.position).sqrMagnitude;
 
-            if (sqrDistance < closestSqrDistance)
+            if (sqrDistance < shortestSqrDistance)
             {
-                closestSqrDistance = sqrDistance;
-                nearestResource = resource;
+                shortestSqrDistance = sqrDistance;
+                nearest = resource;
             }
         }
 
-        if (nearestResource != null)
-        {
-            _claimedResources[nearestResource] = requestingUnit;
-            _discoveredResources.Remove(nearestResource);
-        }
+        if (nearest != null)
+            _discoveredResources.Remove(nearest);
 
-        return nearestResource;
+        return nearest;
+    }
+
+    private void OnEnable()
+    {
+        _scanAbility.ResourcesScanned += AddScannedResources;
+    }
+
+    private void OnDisable()
+    {
+        _scanAbility.ResourcesScanned -= AddScannedResources;
+    }
+
+    private void AddScannedResources(List<Resource> scanned)
+    {
+        foreach (Resource resource in scanned)
+        {
+            if (_discoveredResources.Contains(resource))
+                continue;
+
+            _discoveredResources.Add(resource);
+        }
     }
 }

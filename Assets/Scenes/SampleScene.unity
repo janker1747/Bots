@@ -558,7 +558,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _prefab: {fileID: -811742955532295907, guid: 27875c90922f82445b7615b6e06fe3a6, type: 3}
-  _maxSize: 10
+  _initialSize: 5
 --- !u!114 &963194230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -578,11 +578,6 @@ MonoBehaviour:
   _minDistanceFromBase: 3
   _minDistanceBetweenResources: 2
   _baseTriggerZone: {fileID: 1601790494}
---- !u!4 &1001306549 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8344318317793715659, guid: ed2935a010a617148aa9caa5f464a2af, type: 3}
-  m_PrefabInstance: {fileID: 8252719858567891464}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1179760862
 GameObject:
   m_ObjectHideFlags: 0
@@ -695,7 +690,7 @@ MonoBehaviour:
   _scanLayer:
     serializedVersion: 2
     m_Bits: 8
-  _scanDuration: 3
+  _duration: 3
   _delay: 4
   outlineMaterial: {fileID: 2100000, guid: 2f4ad81c2cfe18c448229df1b4beeab8, type: 2}
 --- !u!114 &2093389490
@@ -750,11 +745,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c572ac1bfd8a38a478ce580e2b486127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  scanDelay: 0.5
-  initialUnitCount: 3
+  _scanDelay: 0.5
+  _initialUnitCount: 3
   _unitSpawner: {fileID: 2093389492}
   _resourceManager: {fileID: 2093389491}
-  dropOffPoint: {fileID: 1001306549}
+  _dropOffPoint: {fileID: 0}
 --- !u!114 &2093389494
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,8 +762,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8fd3e3989e3628f4285816aea20515f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _unitPrefab: {fileID: 6379544878754319493, guid: f4b803c32fe51594f9c6188f6dc75a42, type: 3}
-  _initialPoolSize: 3
+  _prefab: {fileID: 6379544878754319493, guid: f4b803c32fe51594f9c6188f6dc75a42, type: 3}
+  _initialSize: 3
 --- !u!114 &2093389500
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,27 +2,25 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(Mover))]
-[RequireComponent(typeof(ResourceHandler))]
+[RequireComponent(typeof(ResourceCollector))]
 public class Unit : MonoBehaviour
 {
     private Mover _mover;
-    private ResourceHandler _resourceHandler;
+    private ResourceCollector _resourceCollector;
 
     private Resource _resourceTarget;
     private Transform _dropOffPoint;
-    private bool _hasResource = false;
-    private float _time = 1f;
-    private WaitForSeconds _collectedTime;
+    private WaitForSeconds _collectionDelay;
 
     public bool IsBusy { get; private set; }
 
-    private const float _reachedThresholdSqr = 0.01f;
+    [SerializeField] private float _collectionTime = 1f;
 
     private void Awake()
     {
         _mover = GetComponent<Mover>();
-        _resourceHandler = GetComponent<ResourceHandler>();
-        _collectedTime = new WaitForSeconds(_time);
+        _resourceCollector = GetComponent<ResourceCollector>();
+        _collectionDelay = new WaitForSeconds(_collectionTime);
     }
 
     private void OnEnable()
@@ -43,42 +41,35 @@ public class Unit : MonoBehaviour
         _resourceTarget = resource;
         _dropOffPoint = dropOff;
         IsBusy = true;
-        _hasResource = false;
 
         _mover.MoveTo(resource.transform.position);
     }
 
-    private void OnDestinationReached(Vector3 reachedPosition)
+    private void OnDestinationReached(Vector3 position)
     {
-        if (_resourceTarget != null && !_hasResource &&
-            (reachedPosition - _resourceTarget.transform.position).sqrMagnitude < _reachedThresholdSqr)
+        if (!_resourceCollector.HasResource && _resourceTarget != null)
         {
             StartCoroutine(CollectResource());
         }
-        else if (_hasResource &&
-            (_dropOffPoint.position - reachedPosition).sqrMagnitude < _reachedThresholdSqr)
+        else if (_resourceCollector.HasResource)
         {
-            DropOffResource();
+            _resourceCollector.DropAt(position);
+            IsBusy = false;
         }
     }
 
     private IEnumerator CollectResource()
     {
-        yield return _collectedTime;
+        yield return _collectionDelay;
 
-        if (_resourceTarget != null)
+        if (_resourceCollector.TryCollect(_resourceTarget))
         {
-            _resourceHandler.PickUpResource(_resourceTarget);
-            _hasResource = true;
             _mover.MoveTo(_dropOffPoint.position);
             _resourceTarget = null;
         }
-    }
-
-    private void DropOffResource()
-    {
-        _resourceHandler.DropOffResource();
-        _hasResource = false;
-        IsBusy = false;
+        else
+        {
+            IsBusy = false;
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class Mover : MonoBehaviour
@@ -8,6 +9,7 @@ public class Mover : MonoBehaviour
 
     private float _stoppingDistanceSqr;
     private Vector3? _currentTarget;
+    private Coroutine _moveRoutine;
 
     public event Action<Vector3> DestinationReached;
 
@@ -16,28 +18,33 @@ public class Mover : MonoBehaviour
         _stoppingDistanceSqr = _stoppingDistance * _stoppingDistance;
     }
 
-    private void Update()
-    {
-        if (_currentTarget.HasValue == false)
-            return;
-
-        Vector3 target = _currentTarget.Value;
-        Vector3 direction = target - transform.position;
-        float distanceSqr = direction.sqrMagnitude;
-
-        if (distanceSqr <= _stoppingDistanceSqr)
-        {
-            _currentTarget = null;
-            DestinationReached?.Invoke(target);
-            return;
-        }
-
-        direction.Normalize();
-        transform.position += direction * _moveSpeed * Time.deltaTime;
-    }
-
     public void MoveTo(Vector3 targetPosition)
     {
         _currentTarget = targetPosition;
+
+        if (_moveRoutine != null)
+            StopCoroutine(_moveRoutine);
+
+        _moveRoutine = StartCoroutine(MoveToTargetRoutine());
+    }
+
+    private IEnumerator MoveToTargetRoutine()
+    {
+        while (_currentTarget.HasValue)
+        {
+            Vector3 target = _currentTarget.Value;
+            Vector3 currentPosition = transform.position;
+            float distanceSqr = (target - currentPosition).sqrMagnitude;
+
+            if (distanceSqr <= _stoppingDistanceSqr)
+            {
+                _currentTarget = null;
+                DestinationReached?.Invoke(target);
+                yield break;
+            }
+
+            transform.position = Vector3.MoveTowards(currentPosition, target, _moveSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
 }

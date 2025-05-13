@@ -27,10 +27,10 @@ public class ScanAbility : MonoBehaviour
         _colliderBuffer = new Collider[_bufferSize];
         _scanDelay = new WaitForSeconds(_delay);
         _scanDuration = new WaitForSeconds(_duration);
-        StartCoroutine(ScanLoop());
+        StartCoroutine(StartScanning());
     }
 
-    private IEnumerator ScanLoop()
+    private IEnumerator StartScanning()
     {
         while (enabled)
         {

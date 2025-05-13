@@ -19,6 +19,9 @@ public class ResourceSpawner : MonoBehaviour
     [Header("ссылки")]
     [SerializeField] private BaseTriggerZone _baseTriggerZone;
 
+    private float _planeHalfSize = 5f;
+    private float _heightOffset = 1.5f;
+
     private readonly List<Vector3> _usedPositions = new();
     private const int MaxAttempts = 10;
 
@@ -51,8 +54,7 @@ public class ResourceSpawner : MonoBehaviour
     private void Spawn()
     {
         Resource resource = _pool.GetObject();
-        Vector3 spawnPoint = GetRandomPointOnPlane();
-        resource.transform.position = spawnPoint;
+        resource.transform.position = GetRandomPointOnPlane();
     }
 
     private void OnResourceDelivered(Resource resource)
@@ -65,9 +67,9 @@ public class ResourceSpawner : MonoBehaviour
     {
         Vector3 center = _spawnPlane.position;
         Vector3 scale = _spawnPlane.localScale;
-        float halfWidth = 5f * scale.x;
-        float halfHeight = 5f * scale.z;
-        float heightOffset = 1.5f;
+        float halfWidth = _planeHalfSize * scale.x;
+        float halfHeight = _heightOffset * scale.z;
+        float heightOffset = _heightOffset;
 
         for (int i = 0; i < MaxAttempts; i++)
         {
